@@ -22,8 +22,8 @@ Frederico Gouveia — estudante na Oficina – Escola Profissional
 
 ## 📞 Contacto
 
-- ✉️ Email: `[teu-email@example.com](mailto:teu-email@example.com)`
-- 💼 LinkedIn: `[teu-linkedin](https://linkedin.com/in/teu-perfil)`
+- ✉️ Email: [fredericogouveia21@gmail.com](mailto:fredericogouveia21@gmail.com)
+- 💼 LinkedIn: [www.linkedin.com/in/frederico-gouveia-62b67632b](www.linkedin.com/in/frederico-gouveia-62b67632b)
 
 ---
 
