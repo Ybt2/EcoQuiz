@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-website.jpg" type="image/jpg">
+    <title>BGREEN - QUIZ - EcoQuiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#10B981">
+    <meta name="description" content="Teste seus conhecimentos sobre reciclagem e aprenda a separar corretamente os resíduos">
+    <link rel="manifest" href="/manifest.json">
+    
+    <style>
+        @media (display-mode: standalone) {
+            .install-btn {
+                display: none !important;
+            }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .option:hover {
+            transform: translateY(-2px);
+        }
+        
+        .option.correct {
+            background-color: #10B981 !important;
+            color: white !important;
+        }
+        
+        .option.incorrect {
+            background-color: #EF4444 !important;
+            color: white !important;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-emerald-500 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-recycle text-2xl mr-2"></i>
+                <h1 class="text-xl font-bold">EcoQuiz</h1>
+    
+                <!-- Dropdown Menu começa aqui -->
+                <div class="relative inline-block text-left ml-4">
+                    <button id="menuButton" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none" aria-expanded="true" aria-haspopup="true">
+                      Language
+                      <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  
+                    <div id="dropdownMenu" class="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
+                      <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="menuButton">
+                        <a href="index_en.html" data-lang="en" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Inglês</a>
+                      </div>
+                    </div>
+                  </div>
+                  
+                <!-- Dropdown Menu termina aqui -->
+    
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto p-4">
+        <!-- Start Screen -->
+        <div id="startScreen" class="text-center">
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-recycle text-emerald-500 text-4xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz de Reciclagem</h2>
+                <p class="text-gray-600 mb-6">Testa os teus conhecimentos sobre separação de resíduos e ajuda o planeta!</p>
+                <button id="startQuiz" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-full transition duration-300 pulse">
+                    Começar Quiz
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-gray-800 mb-3">Por que reciclar?</h3>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <i class="fas fa-leaf text-blue-500 mb-1"></i>
+                        <p>Preserva recursos naturais</p>
+                    </div>
+                    <div class="bg-yellow-50 p-3 rounded-lg">
+                        <i class="fas fa-bolt text-yellow-500 mb-1"></i>
+                        <p>Economiza energia</p>
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-lg">
+                        <i class="fas fa-globe-europe text-red-500 mb-1"></i>
+                        <p>Reduz a poluição</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-lg">
+                        <i class="fas fa-users text-green-500 mb-1"></i>
+                        <p>Cria empregos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm font-medium text-gray-600" id="questionCounter">Pergunta 1/10</span>
+                    <span class="text-sm font-medium text-emerald-600" id="scoreCounter">0 pontos</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="progress-bar bg-emerald-500 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                <h2 id="questionText" class="text-lg font-bold text-gray-800 mb-6">Carregando pergunta...</h2>
+                
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="flex justify-between">
+                <button id="hintBtn" class="text-emerald-500 font-medium flex items-center">
+                    <i class="fas fa-lightbulb mr-1"></i> Dica
+                </button>
+                <button id="nextBtn" class="hidden bg-emerald-500 text-white px-4 py-2 rounded-full">
+                    Próxima <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div id="hintModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-xl p-6 max-w-sm w-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-emerald-500"><i class="fas fa-lightbulb mr-2"></i>Dica</h3>
+                    <button id="closeHint" class="text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <p id="hintText" class="text-gray-700 mb-4">Carregando dica...</p>
+                <div class="bg-emerald-50 p-3 rounded-lg">
+                    <p class="text-sm text-emerald-800 font-medium">Lembre-se: cada material tem seu lugar correto!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden text-center">
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                <div class="w-32 h-32 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i id="resultIcon" class="fas fa-trophy text-4xl text-emerald-500"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2" id="resultTitle">Parabéns!</h2>
+                <p class="text-gray-600 mb-4" id="resultText">Você acertou <span id="correctAnswers" class="font-bold">0</span> de <span id="totalQuestions" class="font-bold">10</span> perguntas</p>
+                <p class="text-lg font-bold text-emerald-500 mb-6" id="resultScore">0 pontos</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-sm text-gray-500">Tempo</p>
+                        <p class="font-bold" id="timeSpent">0s</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-sm text-gray-500">Precisão</p>
+                        <p class="font-bold" id="accuracy">0%</p>
+                    </div>
+                </div>
+                
+                <button id="restartQuiz" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-full transition duration-300 mb-3">
+                    <i class="fas fa-redo mr-2"></i> Fazer Novamente
+                </button>
+                <button id="shareResults" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-600 font-bold py-3 px-4 rounded-full transition duration-300">
+                    <i class="fas fa-share-alt mr-2"></i> Compartilhar
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 text-left">
+                <h3 class="font-bold text-gray-800 mb-3">Dicas para melhorar</h3>
+                <div id="improvementTips" class="space-y-3">
+                    <!-- Tips will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 p-4 text-center text-gray-600 text-sm">
+        <p>© 2025 EcoQuiz - Todos os direitos reservados</p>
+        <p class="mt-1">Ajude a preservar o nosso planeta!</p>
+    </footer>
+
+    <!-- Service Worker Registration (PWA) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('ServiceWorker registration successful');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+
+    <!-- Quiz Logic -->
+    <script>
+        // Quiz questions
+        const questions = [
+        {
+            question: "Onde se deita uma garrafa de plástico?",
+            options: [
+                "Contentor amarelo",
+                "Contentor azul",
+                "Contentor verde",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "O contentor amarelo é para embalagens de plástico e metal.",
+            category: "Plástico"
+        },
+        {
+            question: "Onde se deita uma folha de papel usada?",
+            options: [
+                "Contentor azul",
+                "Contentor verde",
+                "Contentor amarelo",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "O contentor azul é para papel e cartão limpos.",
+            category: "Papel"
+        },
+        {
+            question: "Onde se deita uma lâmpada queimada?",
+            options: [
+                "Ponto de recolha específico",
+                "Contentor verde",
+                "Contentor amarelo",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "As lâmpadas devem ser entregues num local próprio, como uma loja ou ecocentro.",
+            category: "Resíduos perigosos"
+        },
+        {
+            question: "Onde se deita uma garrafa de vidro?",
+            options: [
+                "Contentor verde",
+                "Contentor azul",
+                "Contentor amarelo",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "O vidro vai para o contentor verde.",
+            category: "Vidro"
+        },
+        {
+            question: "Onde se deita uma caixa de cartão?",
+            options: [
+                "Contentor azul",
+                "Contentor amarelo",
+                "Contentor verde",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "O papel e o cartão vão para o contentor azul.",
+            category: "Papel"
+        },
+        {
+            question: "Onde se deita um remédio fora de validade?",
+            options: [
+                "Na farmácia",
+                "Contentor preto",
+                "Contentor verde",
+                "Contentor amarelo"
+            ],
+            correct: 0,
+            hint: "Os medicamentos devem ser entregues na farmácia.",
+            category: "Resíduos especiais"
+        },
+        {
+            question: "Onde se deita uma pilha gasta?",
+            options: [
+                "Ponto de recolha específico",
+                "Contentor preto",
+                "Contentor verde",
+                "Contentor amarelo"
+            ],
+            correct: 0,
+            hint: "As pilhas devem ser colocadas num ponto próprio, como em supermercados.",
+            category: "Resíduos perigosos"
+        },
+        {
+            question: "Onde se deita um pacote de bolachas vazio?",
+            options: [
+                "Contentor amarelo",
+                "Contentor azul",
+                "Contentor verde",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "As embalagens vão para o contentor amarelo.",
+            category: "Plástico"
+        },
+        {
+            question: "Onde se deita um CD velho?",
+            options: [
+                "Ponto de recolha específico",
+                "Contentor amarelo",
+                "Contentor verde",
+                "Contentor preto"
+            ],
+            correct: 0,
+            hint: "CDs devem ser entregues num ecocentro ou local de recolha.",
+            category: "Resíduos especiais"
+        },
+        {
+            question: "Onde se deita um guardanapo sujo?",
+            options: [
+                "Contentor preto",
+                "Contentor azul",
+                "Contentor verde",
+                "Contentor amarelo"
+            ],
+            correct: 0,
+            hint: "Guardanapos sujos vão para o lixo comum (contentor preto).",
+            category: "Resíduos indiferenciados"
+        }
+    ];
+
+
+        // Quiz variables
+        let currentQuestion = 0;
+        let score = 0;
+        let quizStarted = false;
+        let startTime;
+        let selectedOption = null;
+        let answeredQuestions = 0;
+
+        // DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const startQuizBtn = document.getElementById('startQuiz');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        const questionCounter = document.getElementById('questionCounter');
+        const scoreCounter = document.getElementById('scoreCounter');
+        const progressBar = document.getElementById('progressBar');
+        const hintBtn = document.getElementById('hintBtn');
+        const hintModal = document.getElementById('hintModal');
+        const hintText = document.getElementById('hintText');
+        const closeHint = document.getElementById('closeHint');
+        const restartQuiz = document.getElementById('restartQuiz');
+        const shareResults = document.getElementById('shareResults');
+        const correctAnswers = document.getElementById('correctAnswers');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const resultScore = document.getElementById('resultScore');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+        const resultIcon = document.getElementById('resultIcon');
+        const improvementTips = document.getElementById('improvementTips');
+        const timeSpent = document.getElementById('timeSpent');
+        const accuracy = document.getElementById('accuracy');
+
+        // Start quiz
+        startQuizBtn.addEventListener('click', () => {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            startTime = new Date();
+            loadQuestion();
+        });
+
+        // Load question
+        // Função utilitária para embaralhar um array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Load question com respostas aleatórias
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            questionCounter.textContent = "Pergunta " + (currentQuestion + 1) + "/" + questions.length;
+            progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+            // Clonar e embaralhar as opções
+            const originalOptions = question.options.map((opt, idx) => ({
+                text: opt,
+                isCorrect: idx === question.correct
+            }));
+            shuffleArray(originalOptions);
+
+            // Atualizar options no DOM
+            optionsContainer.innerHTML = '';
+            originalOptions.forEach((optionObj, index) => {
+                const optionElement = document.createElement('button');
+                optionElement.className = 'option w-full text-left p-3 rounded-lg border border-gray-200 hover:border-emerald-300 bg-white hover:bg-emerald-50 transition duration-200';
+                optionElement.textContent = optionObj.text;
+                optionElement.dataset.correct = optionObj.isCorrect;
+                optionElement.addEventListener('click', () => selectOption(optionElement));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Reset UI
+            nextBtn.classList.add('hidden');
+            selectedOption = null;
+            hintBtn.disabled = false;
+        }
+
+
+        // Select option
+        function selectOption(optionElement) {
+            if (selectedOption !== null) return;
+
+            selectedOption = true;
+            const isCorrect = optionElement.dataset.correct === "true";
+
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                opt.removeEventListener('click', () => {});
+                opt.classList.add('cursor-default');
+                opt.classList.remove('hover:border-emerald-300', 'hover:bg-emerald-50');
+
+                if (opt.dataset.correct === "true") {
+                    opt.classList.add('correct');
+                }
+            });
+
+            if (isCorrect) {
+                optionElement.classList.add('correct');
+                score += 10;
+                scoreCounter.textContent = score + " pontos";
+            } else {
+                optionElement.classList.add('incorrect');
+            }
+
+            answeredQuestions++;
+            nextBtn.classList.remove('hidden');
+            hintBtn.disabled = true;
+        }
+
+
+        // Next question
+        nextBtn.addEventListener('click', () => {
+            currentQuestion++;
+            loadQuestion();
+        });
+
+        // Show hint
+        hintBtn.addEventListener('click', () => {
+            hintText.textContent = questions[currentQuestion].hint;
+            hintModal.classList.remove('hidden');
+        });
+
+        // Close hint
+        closeHint.addEventListener('click', () => {
+            hintModal.classList.add('hidden');
+        });
+
+        // Show results
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            
+            const endTime = new Date();
+            const timeDiff = (endTime - startTime) / 1000; // in seconds
+            const minutes = Math.floor(timeDiff / 60);
+            const seconds = Math.floor(timeDiff % 60);
+            
+            correctAnswers.textContent = score / 10;
+            totalQuestions.textContent = questions.length;
+            resultScore.textContent = `${score} pontos`;
+            timeSpent.textContent = `${minutes > 0 ? minutes + 'm ' : ''}${seconds}s`;
+            
+            const accuracyValue = Math.round((score / (questions.length * 10)) * 100);
+            accuracy.textContent = `${accuracyValue}%`;
+            
+            // Set result message based on score
+            if (accuracyValue >= 80) {
+                resultTitle.textContent = window.currentTranslation.excellentResult;
+                resultText.textContent = window.currentTranslation.excellentText;
+            } else if (accuracyValue >= 50) {
+                resultTitle.textContent = window.currentTranslation.goodResult;
+                resultText.textContent = window.currentTranslation.goodText;
+            } else {
+                resultTitle.textContent = window.currentTranslation.learningResult;
+                resultText.textContent = window.currentTranslation.learningText;
+            }
+            
+            // Add improvement tips
+            improvementTips.innerHTML = '';
+            const wrongCategories = [];
+            
+            // Find categories with wrong answers
+            for (let i = 0; i < answeredQuestions; i++) {
+                // This is simplified - in a real app you'd track which questions were answered wrong
+                wrongCategories.push(questions[i].category);
+            }
+            
+            // Get unique categories
+            const uniqueWrongCategories = [...new Set(wrongCategories)];
+            
+            // Add tips for each wrong category
+            uniqueWrongCategories.forEach(category => {
+                const tip = document.createElement('div');
+                tip.className = 'flex items-start';
+                
+                let tipText = '';
+                switch(category) {
+                    case 'Plástico':
+                        tipText = 'Lave as embalagens de plástico antes de reciclar para evitar contaminação.';
+                        break;
+                    case 'Papel':
+                        tipText = 'Papel sujo ou engordurado não pode ser reciclado - coloque no lixo comum.';
+                        break;
+                    case 'Vidro':
+                        tipText = 'Apenas vidro de embalagens (garrafas, frascos) pode ser reciclado. Vidros de janelas ou espelhos vão para o ecocentro.';
+                        break;
+                    case 'Resíduos perigosos':
+                        tipText = 'Pilhas, lâmpadas e produtos químicos devem ser entregues em pontos de recolha específicos.';
+                        break;
+                    case 'Resíduos especiais':
+                        tipText = 'Eletrodomésticos, móveis e outros resíduos volumosos devem ser entregues no ecocentro ou solicitada recolha especial.';
+                        break;
+                    default:
+                        tipText = 'Quando em dúvida, consulte o site da sua autarquia para informações sobre reciclagem.';
+                }
+                
+                tip.innerHTML = `
+                    <div class="bg-emerald-100 p-2 rounded-full mr-3 mt-1">
+                        <i class="fas fa-recycle text-emerald-500 text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">${category}</p>
+                        <p class="text-gray-600 text-sm">${tipText}</p>
+                    </div>
+                `;
+                
+                improvementTips.appendChild(tip);
+            });
+        }
+
+        // Restart quiz
+        restartQuiz.addEventListener('click', () => {
+            currentQuestion = 0;
+            score = 0;
+            answeredQuestions = 0;
+            scoreCounter.textContent = "0 pontos";
+            resultsScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        });
+
+        // Share results
+        shareResults.addEventListener('click', () => {
+            // Calculando a pontuação: número de respostas corretas
+            let correctAnswers = score;
+            let totalQuestions = questions.length;
+
+            // Texto de compartilhamento formatado (incluindo o link em uma nova linha)
+            const shareText = `Eu tive ${correctAnswers} pontos em ${totalQuestions} perguntas no quiz de reciclagem! Tenta tu também!\n${window.location.href}`;
+
+            // Tenta copiar para a área de transferência
+            if (navigator.clipboard) {
+                // Usando a API moderna para copiar (suportada pela maioria dos navegadores modernos)
+                navigator.clipboard.writeText(shareText)
+                    .then(() => {
+                        alert('Resultado copiado para a área de transferência! Agora você pode compartilhar.');
+                    })
+                    .catch(err => {
+                        console.log('Erro ao copiar:', err);
+                        alert('Erro ao copiar o texto. Tente novamente.');
+                    });
+            } else {
+                // Fallback para navegadores mais antigos (sem o suporte à API do clipboard)
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Resultado copiado para a área de transferência! Agora pode compartilhar.');
+            }
+        });
+
+        // Close hint when clicking outside
+        hintModal.addEventListener('click', (e) => {
+            if (e.target === hintModal) {
+                hintModal.classList.add('hidden');
+            }
+        });
+    </script>
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        menuButton.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!menuButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

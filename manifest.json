@@ -1,0 +1,10 @@
+{
+    "name": "Quiz de Reciclagem",
+    "short_name": "EcoQuiz",
+    "start_url": "/?home=true",
+    "theme_color": "#000000",
+    "background_color": "#FFFFFF",
+    "display": "fullscreen",
+    "orientation": "portrait"
+  }
+  
